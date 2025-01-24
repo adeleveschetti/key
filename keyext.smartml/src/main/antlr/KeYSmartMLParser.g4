@@ -2,7 +2,7 @@ parser grammar KeYSmartMLParser;
 
 import KeYParser;
 
-options { tokenVocab = KeYRustyLexer; }
+options { tokenVocab = KeYSmartMLLexer; }
 
 @header {
 package org.key_project.smartml.parser;

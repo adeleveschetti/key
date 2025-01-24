@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(path: ':keyext.rusty')
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     antlr 'org.antlr:antlr4:4.13.1'
