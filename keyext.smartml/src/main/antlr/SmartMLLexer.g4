@@ -44,6 +44,7 @@ RESOURCE    : 'resource';
 NEW         : 'new';
 THIS        : 'this';
 USES        : 'uses';
+NIL         : 'nil';
 PLUS        : '+';
 MINUS       : '-';
 TIMES       : '*';

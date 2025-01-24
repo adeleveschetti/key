@@ -13,7 +13,7 @@ program
     ;
 
 datatypeDec
-    : DATATYPE id CLPAR dataTypeConstr (adtFunctionDec)* CRPAR
+    : DATATYPE (id ) CLPAR dataTypeConstr (adtFunctionDec)* CRPAR
     ;
 
 dataTypeConstr
@@ -21,10 +21,10 @@ dataTypeConstr
     ;
 
 adtFunctionDec
-    : type id LPAR (vardec (COMMA vardec)*)? RPAR adtStatBlock
+    : type id LPAR (params)? RPAR adtblockExpr
     ;
 
-adtStatBlock
+adtblockExpr
     : CLPAR (adtExpression)* CRPAR
     ;
 
@@ -36,12 +36,8 @@ adtExpression
     | adtAssign SEMIC
     ;
 
-dataTypeCall
-    : funName=id LPAR (vardec (COMMA vardec)*)? RPAR
-    ;
-
 ifExpression
-    : IF expr adtStatBlock ELSE adtStatBlock
+    : IF expr adtblockExpr ELSE adtblockExpr
     ;
 
 adtCall
@@ -58,11 +54,11 @@ caseExpr
     ;
 
 adtAssign
-    : vardec ASM (expr | dataTypeCall)
+    : VardecExpression ASM (expr | adtCall)
     ;
 
 exceptionDec
-    : EXCEPTION ID (LPAR vardec (COMMA vardec)*)? RPAR
+    : EXCEPTION ID (LPAR VardecExpression (COMMA VardecExpression)*)? RPAR
     ;
 
 resourceDec
@@ -84,12 +80,11 @@ body
     ;
 
 constructor
-    : CONSTRUCTOR LPAR (varParams+=vardec (COMMA varParams+=vardec)*)? RPAR CLPAR
-      (assign SEMIC)* (varBody+=vardec SEMIC)* (internalCall SEMIC)* CRPAR
+    : CONSTRUCTOR LPAR (params)? RPAR CLPAR (expr SEMIC)* CRPAR
     ;
 
 typeParams
-    : (id | dataTypeCall) DOUBLE_COLON type
+    : (id | adtCall | NIL) DOUBLE_COLON type
     ;
 
 field
@@ -97,24 +92,20 @@ field
     ;
 
 functionDec
-    : (funType)? id LPAR (vardec (COMMA vardec)*)? RPAR (RETURNS returnType)?
+    : (funType)? id LPAR (params )? RPAR (RETURNS returnType)?
     ;
 
 function
-    : functionDec statBlock
+    : functionDec blockExpr
     ;
 
 funType
     : VIEW | PURE
     ;
 
-statement
-    : ifStatement | exprStat | loop | assign SEMIC | funCall SEMIC
-    | assertError SEMIC | transaction | returnStat | tryStatement | statBlock
-    ;
 
 ifStatement
-    : IF LPAR cond+=expr RPAR blocks+=statBlock (ELSE elseBlock=statBlock)?
+    : IF LPAR cond+=expr RPAR blocks+=blockExpr (ELSE elseBlock=blockExpr)?
     ;
 
 exprStat
@@ -123,67 +114,80 @@ exprStat
     ;
 
 loop
-    : WHILE expr statBlock
+    : WHILE expr blockExpr
     ;
 
-assign
-    : vardec ASM ( expr | funCall)
-    ;
-
-funCall
-    : internalCall | externalCall | adtCall
-    ;
+//funCall
+//    : internalCall
+//    | externalCall
+//    | adtCall
+//    ;
 
 internalCall
     : idName=thisVal DOT funName=id LPAR params? RPAR
     ;
 
 externalCall
-    : (SAFE)? idName=id (resources)? DOT funName=id LPAR params? RPAR
+    : (SAFE)? idName=id (DOLLAR expr)? DOT funName=id LPAR params? RPAR
     ;
 
-assertError
+assert
     : ASSERT LPAR expr RPAR
     ;
 
 letExpr
-    : LET ident+=vardec ASM exprs+=expr (COMMA ident+=vardec ASM exprs+=expr)? IN valExpr=statement
-    ;
-
-transaction
-    : TRY statement ((ABORT abortStat=statBlock)? (SUCCESS successStat=statBlock)?)
-    ;
-
-returnStat
-    : RETURN expr SEMIC
+    : LET ident+=VardecExpression ASM exprs+=expr (COMMA ident+=VardecExpression ASM exprs+=expr)? IN valExpr=stmt
     ;
 
 tryStatement
-    : TRY statement CATCH LPAR vardec RPAR statBlock
+    : TRY stmt CATCH LPAR params RPAR blockExpr
     ;
 
-statBlock
-    : CLPAR (statement)* CRPAR
+tryAbortStatement
+    : TRY expr SEMIC ABORT blockExpr SUCCESS blockExpr
     ;
-
 
 params
     : (expr COMMA)* expr
     ;
 
 expr
-    : literalExpr # LiteralExpression
-   | expr DOT identifier # FieldExpression
-   | expr LPAREN params? RPAREN # CallExpression
-   | expr DOLLAR expr # ResourceExpression
-   | (MINUS | NOT) expr # NegationExpression
-   | expr (PLUS | MINUS) expr # ArithmeticOrLogicalExpression
-   | expr (shl | shr) expr # ArithmeticOrLogicalExpression
-   | expr AND expr # ArithmeticOrLogicalExpression
-   | expr CARET expr # ArithmeticOrLogicalExpression
-   | expr OR expr # ArithmeticOrLogicalExpression
-   | expr comparisonOperator expr # ComparisonExpression
-   | expr EQ expr # AssignmentExpression
+    : literalExpr                                         # LiteralExpression
+    | id                                                  # IdentifierExpression
+    | LPAR expr RPAR                                      # ParenthesizedExpression
+    | expr (DOT identifier)                               # FieldAccess
+    | expr LPAR params? RPAR                              # FunctionCall
+    | expr DOLLAR expr                                    # ResourceExpression
+    | expr comparisonOperator expr                        # ComparisonExpression
+    | (NOT | MINUS) expr                                  # UnaryExpression
+    | expr (PLUS | MINUS) expr                            # AdditiveExpression
+    | expr (shl | shr) expr                               # ShiftExpression
+    | expr (AND | OR ) expr                               # LogicalExpression
+    | expr ASM expr                                       # AssignmentExpression
+    | RETURN expr                                         # ReturnExpression
+    | NEW id LPAR params? RPAR                            # NewValsExpression
+    | type expr                                          # VardecExpression
+    ;
+
+stmt
+   : ';'
+   | ifStatement
+   | expr
+   | letExpr
+   | loop
+   | assert
+   | tryAbortStatement
+   | tryStatement
+   | blockExpr
+   ;
+
+blockExpr
+   : '{' stmts? '}'
+   ;
+
+stmts
+   : stmt+ expr?
+   | expr
    ;
 
 identifier
@@ -211,6 +215,7 @@ shr
 
 literalExpr
    : CHAR
+   | THIS
    | LITERALS
    | DOUBLE_STRING
    | SINGLE_STRING
@@ -218,22 +223,11 @@ literalExpr
    | INTEGER
    | TRUE
    | FALSE
+   | NIL
    ;
-
-newVal
-    : NEW id LPAR params? RPAR
-    ;
 
 thisVal
     : THIS
-    ;
-
-vardec
-    : (type)? (STORAGE)? (id | qualifiedAccess)
-    ;
-
-qualifiedAccess
-    : (id | thisVal) DOT fieldName=id
     ;
 
 adtFunCall
