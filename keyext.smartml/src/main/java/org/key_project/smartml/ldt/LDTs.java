@@ -6,7 +6,7 @@ package org.key_project.smartml.ldt;
 import org.jspecify.annotations.NonNull;
 import org.key_project.logic.Name;
 import org.key_project.logic.sort.Sort;
-import org.key_project.rusty.Services;
+import org.key_project.smartml.Services;
 
 import java.util.HashMap;
 import java.util.Iterator;

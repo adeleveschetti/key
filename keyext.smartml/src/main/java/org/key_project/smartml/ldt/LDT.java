@@ -12,9 +12,9 @@ import org.key_project.logic.Term;
 import org.key_project.logic.op.Function;
 import org.key_project.logic.op.Operator;
 import org.key_project.logic.sort.Sort;
-import org.key_project.rusty.Services;
-import org.key_project.rusty.ast.expr.ArithLogicalExpression;
-import org.key_project.rusty.ast.expr.LiteralExpression;
+import org.key_project.smartml.Services;
+import org.key_project.smartml.ast.expr.ArithLogicalExpression;
+import org.key_project.smartml.ast.expr.LiteralExpression;
 
 public abstract class LDT implements Named {
     private final Name name;

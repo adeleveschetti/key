@@ -4,9 +4,9 @@
 package org.key_project.smartml.ast;
 
 import org.key_project.logic.SyntaxElement;
-import org.key_project.rusty.ast.SourceData;
-import org.key_project.rusty.ast.visitor.Visitor;
-import org.key_project.rusty.rule.MatchConditions;
+import org.key_project.smartml.ast.SourceData;
+import org.key_project.smartml.ast.visitor.Visitor;
+import org.key_project.smartml.rule.MatchConditions;
 
 
 public interface SmartMLProgramElement extends SyntaxElement {
