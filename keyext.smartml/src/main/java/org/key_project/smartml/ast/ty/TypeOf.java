@@ -5,10 +5,10 @@ package org.key_project.smartml.ast.ty;
 
 import org.jspecify.annotations.NonNull;
 import org.key_project.logic.SyntaxElement;
-import org.key_project.rusty.ast.abstraction.KeYRustyType;
-import org.key_project.rusty.ast.abstraction.Type;
-import org.key_project.rusty.ast.visitor.Visitor;
-import org.key_project.rusty.logic.op.sv.ProgramSV;
+import org.key_project.smartml.ast.abstraction.KeYSmartMLType;
+import org.key_project.smartml.ast.abstraction.Type;
+import org.key_project.smartml.ast.visitor.Visitor;
+import org.key_project.smartml.logic.op.sv.ProgramSV;
 
 import java.util.Objects;
 
@@ -17,14 +17,14 @@ import java.util.Objects;
  */
 public final class TypeOf implements SmartMLType {
     private final ProgramSV sv;
-    private final KeYRustyType type;
+    private final KeYSmartMLType type;
 
     /**
      *
      */
     public TypeOf(ProgramSV sv) {
         this.sv = sv;
-        this.type = new KeYRustyType(sv.sort());
+        this.type = new KeYSmartMLType(sv.sort());
     }
 
 

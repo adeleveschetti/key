@@ -5,8 +5,11 @@ package org.key_project.smartml.ast.visitor;
 
 import org.key_project.smartml.Services;
 import org.key_project.smartml.ast.SmartMLProgramElement;
+import org.key_project.smartml.ast.expr.BlockExpression;
 import org.key_project.smartml.ast.expr.BooleanLiteralExpression;
+import org.key_project.smartml.ast.expr.IfExpression;
 import org.key_project.smartml.ast.expr.NegationExpression;
+import org.key_project.smartml.ast.ty.PrimitiveSmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
 import org.key_project.smartml.logic.op.sv.ProgramSV;
 import org.key_project.smartml.logic.op.sv.SchemaVariable;
@@ -56,10 +59,10 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnBlockExpression(BlockExpression x) {
-       // doDefaultAction(x);
-    //}
+    @Override
+    public void performActionOnBlockExpression(BlockExpression x) {
+       doDefaultAction(x);
+    }
 
     @Override
     public void performActionOnBooleanLiteralExpression(BooleanLiteralExpression x) {
@@ -241,10 +244,10 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnIfExpression(IfExpression x) {
-       // doDefaultAction(x);
-    //}
+    @Override
+    public void performActionOnIfExpression(IfExpression x) {
+       doDefaultAction(x);
+    }
 
     //@Override
     // public void performActionOnIfLetExpression(IfLetExpression x) {
@@ -281,10 +284,10 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnPrimitiveRustType(PrimitiveRustType x) {
-       // doDefaultAction(x);
-    //}
+    @Override
+    public void performActionOnPrimitiveSmartMLType(PrimitiveSmartMLType x) {
+       doDefaultAction(x);
+    }
 
     //@Override
     // public void performActionOnSchemaRustType(SchemaSmartMLType x) {

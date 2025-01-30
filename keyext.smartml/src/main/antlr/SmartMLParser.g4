@@ -7,16 +7,16 @@ options {
 // Parser rules
 
 program
-    : (datatypeDec | exceptionDec | resourceDec)*
+    : (adtDec | exceptionDec | resourceDec)*
       (interfaceDec)*
-      (contractDec)+
+      (contractDec)+ EOF
     ;
 
-datatypeDec
-    : DATATYPE (id ) CLPAR dataTypeConstr (adtFunctionDec)* CRPAR
+adtDec
+    : DATATYPE (id ) CLPAR adtConstr (adtFunctionDec)* CRPAR
     ;
 
-dataTypeConstr
+adtConstr
     : CONSTRUCTOR CLPAR (typeParams (PAR typeParams)*)? CRPAR
     ;
 
@@ -76,7 +76,7 @@ contractDec
     ;
 
 body
-    : (datatypeDec)* (field)* constructor (function)*
+    : (adtDec)* (field)* constructor (function)*
     ;
 
 constructor

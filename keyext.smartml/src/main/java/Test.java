@@ -1,6 +1,8 @@
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.key_project.smartml.Services;
+import org.key_project.smartml.ast.Converter;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -17,7 +19,7 @@ public class Test {
             var parser = new SmartMLParser(ts);
             var program = parser.program();
             System.out.println(program.getText());
-            //var converter = new Converter(new Services());
+            var converter = new Converter(new Services());
             //var converted = converter.convertCrate(program);
             //System.out.println(converted);
         } catch (IOException e) {

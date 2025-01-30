@@ -11,9 +11,9 @@ import org.key_project.prover.rules.TacletAnnotation;
 import org.key_project.prover.rules.TacletApplPart;
 import org.key_project.prover.rules.TacletAttributes;
 import org.key_project.prover.rules.tacletbuilder.TacletGoalTemplate;
-import org.key_project.rusty.rule.Taclet;
-import org.key_project.rusty.rule.TacletPrefix;
-import org.key_project.rusty.rule.executor.rustydl.SuccTacletExecutor;
+import org.key_project.smartml.rule.Taclet;
+import org.key_project.smartml.rule.TacletPrefix;
+import org.key_project.smartml.rule.executor.smartmldl.SuccTacletExecutor;
 import org.key_project.util.collection.ImmutableList;
 import org.key_project.util.collection.ImmutableMap;
 import org.key_project.util.collection.ImmutableSet;
@@ -26,7 +26,7 @@ public class SuccTaclet extends FindTaclet {
     private final boolean ignoreTopLevelUpdates;
 
     /**
-     * creates a {@link org.key_project.rusty.rule.Taclet} (old name Schematic Theory Specific Rule) with the given parameters
+     * creates a {@link org.key_project.smartml.rule.Taclet} (old name Schematic Theory Specific Rule) with the given parameters
      * that works on the succedent.
      *
      * @param name the name of the {@link Taclet}

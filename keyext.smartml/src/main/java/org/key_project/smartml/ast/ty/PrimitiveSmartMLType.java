@@ -9,11 +9,11 @@ import org.key_project.smartml.ast.abstraction.PrimitiveType;
 import org.key_project.smartml.ast.visitor.Visitor;
 
 public record PrimitiveSmartMLType(PrimitiveType type) implements SmartMLType {
-    //@Override
-   // public void visit(Visitor v) {
+    @Override
+   public void visit(Visitor v) {
 
-    //    v.performActionOnPrimitiveSmartMLType(this);
-    //}
+        v.performActionOnPrimitiveSmartMLType(this);
+    }
 
     @Override
     public @NonNull SyntaxElement getChild(int n) {

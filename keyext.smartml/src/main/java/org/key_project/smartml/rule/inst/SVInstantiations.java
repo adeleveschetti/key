@@ -17,7 +17,6 @@ import org.key_project.smartml.logic.SmartMLDLTheory;
 import org.key_project.smartml.logic.op.Modality;
 import org.key_project.smartml.logic.op.sv.SchemaVariableFactory;
 import org.key_project.smartml.logic.sort.ProgramSVSort;
-import org.key_project.smartml.rule.inst.*;
 import org.key_project.util.collection.*;
 
 import java.util.Iterator;
@@ -100,9 +99,9 @@ public class SVInstantiations
         return add(sv, new TermInstantiation(sv, subst), services);
     }
 
-   /* public SVInstantiations add(SchemaVariable sv, ProgramList pes, LogicServices services) {
+   public SVInstantiations add(SchemaVariable sv, ProgramList pes, LogicServices services) {
         return add(sv, new ProgramListInstantiation(pes.list()), services);
-    }*/
+    }
 
     /**
      * Add the given additional condition for the generic sort instantiations
@@ -113,10 +112,10 @@ public class SVInstantiations
         }, services);
     }
 
-   /* public SVInstantiations addList(SchemaVariable sv, Object[] list, LogicServices services) {
+   public SVInstantiations addList(SchemaVariable sv, Object[] list, LogicServices services) {
         return add(sv, new ListInstantiation(sv, ImmutableSLList.nil().prepend(list)),
             services);
-    }*/
+    }
 
     /**
      * adds the given pair to the instantiations. If the given SchemaVariable has been instantiated
@@ -126,9 +125,9 @@ public class SVInstantiations
      * @param pe the ProgramElement the SchemaVariable is instantiated with
      * @return SVInstantiations the new SVInstantiations containing the given pair
      */
-   /* public SVInstantiations add(SchemaVariable sv, SmartMLProgramElement pe, LogicServices services) {
+   public SVInstantiations add(SchemaVariable sv, SmartMLProgramElement pe, LogicServices services) {
         return add(sv, new ProgramInstantiation(pe), services);
-    }*/
+    }
 
     /**
      * adds the given pair to the instantiations. If the given SchemaVariable has been instantiated

@@ -4,10 +4,8 @@
 package org.key_project.smartml.ast.visitor;
 
 //import org.key_project.smartml.ast.PathInExpression;
-import org.key_project.smartml.ast.expr.ArithLogicalExpression;
-import org.key_project.smartml.ast.expr.BooleanLiteralExpression;
-import org.key_project.smartml.ast.expr.IntegerLiteralExpression;
-import org.key_project.smartml.ast.expr.NegationExpression;
+import org.key_project.smartml.ast.expr.*;
+import org.key_project.smartml.ast.ty.PrimitiveSmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
 import org.key_project.smartml.logic.op.sv.SchemaVariable;
 //import org.key_project.smartml.ast.fn.SelfParam;
@@ -26,7 +24,7 @@ public interface Visitor {
 
     //  void performActionOnAssignmentExpression(AssignmentExpression x);
 
-    //  void performActionOnBlockExpression(BlockExpression x);
+    void performActionOnBlockExpression(BlockExpression x);
 
     void performActionOnBooleanLiteralExpression(BooleanLiteralExpression x);
 
@@ -106,7 +104,7 @@ public interface Visitor {
 
     //  void performActionOnIteratorLoopExpression(IteratorLoopExpression x);
 
-    //  void performActionOnIfExpression(IfExpression x);
+    void performActionOnIfExpression(IfExpression x);
 
     //  void performActionOnMatchExpression(MatchExpression x);
 
@@ -116,7 +114,7 @@ public interface Visitor {
 
     //  void performActionOnExpressionStatement(ExpressionStatement x);
 
-    //  void performActionOnPrimitiveRustType(PrimitiveRustType x);
+    void performActionOnPrimitiveSmartMLType(PrimitiveSmartMLType x);
 
   //  //  void performActionOnSchemaRustType(SchemaSmartMLType x);
 }

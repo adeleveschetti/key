@@ -10,11 +10,6 @@ import org.key_project.smartml.ast.visitor.Visitor;
 public record ArithLogicalExpression(org.key_project.smartml.ast.expr.Expr left, ArithLogicalExpression.Operator op,
                                      org.key_project.smartml.ast.expr.Expr right)implements Expr {
 
-    @Override
-    public void visit(org.key_project.rusty.ast.visitor.Visitor v) {
-
-    }
-
     public enum Operator {
     Plus, Minus, Multiply, Divide, Modulo, BitwiseAnd, BitwiseOr, BitwiseXor, Shl, Shr;
 

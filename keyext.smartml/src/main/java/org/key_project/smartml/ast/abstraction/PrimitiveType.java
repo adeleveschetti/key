@@ -10,6 +10,7 @@ import org.key_project.logic.Name;
 import org.key_project.logic.sort.Sort;
 
 import org.jspecify.annotations.NonNull;
+import org.key_project.smartml.Services;
 
 public final class PrimitiveType implements Type {
     private static final Map<Name, PrimitiveType> typeMap =
