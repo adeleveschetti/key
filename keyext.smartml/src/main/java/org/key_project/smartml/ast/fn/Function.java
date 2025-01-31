@@ -5,6 +5,7 @@ import org.key_project.logic.Name;
 import org.key_project.logic.Named;
 import org.key_project.logic.SyntaxElement;
 import org.key_project.smartml.ast.Item;
+import org.key_project.smartml.ast.Var;
 import org.key_project.smartml.ast.expr.BlockExpression;
 import org.key_project.smartml.ast.fn.FunctionParam;
 import org.key_project.smartml.ast.stmt.Statement;
@@ -14,7 +15,7 @@ import org.key_project.smartml.ast.visitor.Visitor;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public record Function(Name name, org.key_project.util.collection.ImmutableArray<FunctionParam> params, SmartMLType returnType,
+public record Function(Name name, org.key_project.util.collection.ImmutableArray<Var> params, SmartMLType returnType,
                        BlockExpression body) implements Statement, Named {
 
     @Override

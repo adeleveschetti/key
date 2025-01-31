@@ -92,17 +92,12 @@ field
     ;
 
 functionDec
-    : (funType)? id LPAR (params )? RPAR (RETURNS returnType)?
+    : id LPAR (params )? RPAR (RETURNS returnType)?
     ;
 
 function
     : functionDec blockExpr
     ;
-
-funType
-    : VIEW | PURE
-    ;
-
 
 ifStatement
     : IF LPAR cond+=expr RPAR blocks+=blockExpr (ELSE elseBlock=blockExpr)?
@@ -148,8 +143,11 @@ tryAbortStatement
     ;
 
 params
-    : (expr COMMA)* expr
+    : (param COMMA)* param
     ;
+
+param
+    : type id ;
 
 expr
     : literalExpr                                         # LiteralExpression

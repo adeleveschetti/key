@@ -6,11 +6,16 @@ package org.key_project.smartml.ast;
 import java.util.*;
 
 import org.key_project.logic.Name;
+import org.key_project.rusty.parsing.RustyParser;
 import org.key_project.smartml.ast.Identifier;
 import org.key_project.smartml.Services;
 import org.key_project.smartml.ast.abstraction.Type;
+import org.key_project.smartml.ast.expr.BlockExpression;
+import org.key_project.smartml.ast.expr.Expr;
+import org.key_project.smartml.ast.fn.Constructor;
 import org.key_project.smartml.ast.fn.Function;
 import org.key_project.smartml.ast.stmt.ExceptionDec;
+import org.key_project.smartml.ast.stmt.Statement;
 import org.key_project.smartml.ast.ty.SmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
 import org.key_project.util.collection.ImmutableArray;
@@ -69,8 +74,23 @@ public class Converter {
     private SmartMLType convertType(SmartMLParser.TypeContext ctx){
         return null;
     }
+    private SmartMLType convertReturnType(SmartMLParser.ReturnTypeContext ctx){
+        return null;
+    }
 
     private Function convertAdtFunctionDec(SmartMLParser.AdtFunctionDecContext ctx){
+        ImmutableArray<Var> vars = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        return new Function(convertIdentifier(ctx.id()).name(),vars,convertType(ctx.type()),convertAdtBlockExpr(ctx.adtblockExpr()));
+    }
+
+    private BlockExpression convertAdtBlockExpr(SmartMLParser.AdtblockExprContext ctx){
+        ImmutableArray<Statement> statements = ctx.adtExpression() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.adtExpression().stream().map(this::convertAdtExpression).toList());
+        return new BlockExpression(statements);
+    }
+
+    private Statement convertAdtExpression(SmartMLParser.AdtExpressionContext ctx){ // TODO: !!
         return null;
     }
 
@@ -87,13 +107,65 @@ public class Converter {
     }
 
     private Contract convertContractDec(SmartMLParser.ContractDecContext ctx){
+        Name name = convertIdentifier(ctx.contractId).name();
+        ImmutableArray<Identifier> resources = ctx.resourceTypes == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(
+                ctx.resourceTypes.stream().map(this::convertIdentifier).toList());
+        ImmutableArray<Field> fields = ctx.body().field() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(
+                ctx.body().field().stream().map(this::convertField).toList());
+        ImmutableArray<Adt> adts = ctx.body().adtDec() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(
+                ctx.body().adtDec().stream().map(this::convertAdtDec).toList());
+        Constructor constructor = convertConstructor(ctx.body().constructor());
+        ImmutableArray<Function> functions = ctx.body().function() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(
+                ctx.body().function().stream().map(this::convertFunction).toList());
+        return new Contract(name,resources,adts,fields,constructor,functions);
+    }
+
+    private Constructor convertConstructor(SmartMLParser.ConstructorContext ctx){
+        ImmutableArray<Var> vars = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        ImmutableArray<Expr> exprs = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.expr().stream().map(this::convertExpr).toList());
+        return new Constructor(vars,exprs);
+    }
+
+    private Function convertFunction(SmartMLParser.FunctionContext ctx){
+        Name name = convertIdentifier(ctx.functionDec().id()).name();
+        ImmutableArray<Var> vars = ctx.functionDec().params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.functionDec().params().param().stream().map(this::convertParam).toList());
+        SmartMLType type = convertReturnType(ctx.functionDec().returnType());
+        BlockExpression blockExpr = convertBlockExpr(ctx.blockExpr());
+        return new Function(name,vars,type,blockExpr);
+    }
+
+    private BlockExpression convertBlockExpr(SmartMLParser.BlockExprContext ctx){ // TODO: check why we have expressions in statements
+        ImmutableArray<Statement> stmts = ctx.stmts() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.stmts().stmt().stream().map(this::convertStatement).toList());
+        return new BlockExpression(stmts);
+    }
+
+    private Statement convertStatement(SmartMLParser.StmtContext ctx){
         return null;
+    }
+
+    private Expr convertExpr(SmartMLParser.ExprContext ctx){
+        return null;
+    }
+
+    private Field convertField(SmartMLParser.FieldContext ctx){
+        return new Field(convertType(ctx.type()), convertIdentifier(ctx.id()));
     }
 
     private Identifier convertIdentifier(SmartMLParser.IdContext ctx) {
         return new Identifier(new Name(ctx.getText()));
     }
 
+    private Var convertParam(SmartMLParser.ParamContext ctx){
+        return new Var(convertType(ctx.type()), convertIdentifier(ctx.id()));
+    }
 
 
 
