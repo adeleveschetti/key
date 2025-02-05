@@ -105,7 +105,7 @@ public abstract class ProgramSVSort extends SortImpl {
 
         @Override
         public boolean canStandFor(SmartMLProgramElement pe, Services services) {
-            if (pe instanceof NegationExpression ne
+            if (pe instanceof UnaryExpression ne
                     && ne.getChild(0) instanceof IntegerLiteralExpression) {
                 return true;
             }

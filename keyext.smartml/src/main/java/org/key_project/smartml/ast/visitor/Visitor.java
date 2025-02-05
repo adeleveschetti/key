@@ -5,6 +5,8 @@ package org.key_project.smartml.ast.visitor;
 
 //import org.key_project.smartml.ast.PathInExpression;
 import org.key_project.smartml.ast.expr.*;
+import org.key_project.smartml.ast.stmt.IfStatement;
+import org.key_project.smartml.ast.stmt.ReturnStatement;
 import org.key_project.smartml.ast.ty.PrimitiveSmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
 import org.key_project.smartml.logic.op.sv.SchemaVariable;
@@ -22,17 +24,22 @@ import org.key_project.smartml.logic.op.sv.SchemaVariable;
 public interface Visitor {
     void performActionOnArithLogicalExpression(ArithLogicalExpression x);
 
-    //  void performActionOnAssignmentExpression(AssignmentExpression x);
+    void performActionOnAssignmentExpression(AssignmentExpression x);
 
     void performActionOnBlockExpression(BlockExpression x);
 
     void performActionOnBooleanLiteralExpression(BooleanLiteralExpression x);
 
+    void performActionOnNewValExpression(NewValExpression x);
+
+    void performActionOnResourceExpression(ResourceExpression x);
+
+
     //  void performActionOnContextBlockExpression(ContextBlockExpression x);
 
     void performActionOnIntegerLiteralExpression(IntegerLiteralExpression x);
 
-    void performActionOnNegationExpression(NegationExpression x);
+    void performActionOnNegationExpression(UnaryExpression x);
 
     void performActionOnSchemaVariable(SchemaVariable x);
 
@@ -42,7 +49,7 @@ public interface Visitor {
 
     //  void performActionOnMethodCall(MethodCallExpression x);
 
-    //  void performActionOnFieldExpression(FieldExpression x);
+    void performActionOnFieldExpression(FieldExpression x);
 
     //  void performActionOnTupleIndexingExpression(TupleIndexingExpression x);
 
@@ -58,7 +65,7 @@ public interface Visitor {
 
     //  void performActionOnTypeCastExpression(TypeCastExpression x);
 
-    //  void performActionOnComparisonExpression(ComparisonExpression x);
+    void performActionOnComparisonExpression(ComparisonExpression x);
 
     //  void performActionOnRangeExpression(RangeExpression x);
 
@@ -70,7 +77,6 @@ public interface Visitor {
 
     //  void performActionOnBreakExpression(BreakExpression x);
 
-    //  void performActionOnReturnExpression(ReturnExpression x);
 
     //  void performActionOnGroupedExpression(GroupedExpression x);
 
@@ -104,7 +110,7 @@ public interface Visitor {
 
     //  void performActionOnIteratorLoopExpression(IteratorLoopExpression x);
 
-    void performActionOnIfExpression(IfExpression x);
+    void performActionOnIfStatement(IfStatement x);
 
     //  void performActionOnMatchExpression(MatchExpression x);
 

@@ -100,7 +100,7 @@ function
     ;
 
 ifStatement
-    : IF LPAR cond+=expr RPAR blocks+=blockExpr (ELSE elseBlock=blockExpr)?
+   : IF expr blockExpr (ELSE (blockExpr | ifStatement))?
     ;
 
 exprStat
@@ -112,11 +112,11 @@ loop
     : WHILE expr blockExpr
     ;
 
-//funCall
-//    : internalCall
-//    | externalCall
-//    | adtCall
-//    ;
+funCall
+    : internalCall
+    | externalCall
+    | adtCall
+    ;
 
 internalCall
     : idName=thisVal DOT funName=id LPAR params? RPAR
@@ -153,18 +153,16 @@ expr
     : literalExpr                                         # LiteralExpression
     | id                                                  # IdentifierExpression
     | LPAR expr RPAR                                      # ParenthesizedExpression
-    | expr (DOT identifier)                               # FieldAccess
-    | expr LPAR params? RPAR                              # FunctionCall
+    | expr (DOT id)                                       # FieldAccess
     | expr DOLLAR expr                                    # ResourceExpression
     | expr comparisonOperator expr                        # ComparisonExpression
     | (NOT | MINUS) expr                                  # UnaryExpression
-    | expr (PLUS | MINUS) expr                            # AdditiveExpression
-    | expr (shl | shr) expr                               # ShiftExpression
-    | expr (AND | OR ) expr                               # LogicalExpression
+    | expr (PLUS | MINUS) expr                            # ArithmeticOrLogicalExpression
+    | expr (shl | shr) expr                               # ArithmeticOrLogicalExpression
+    | expr (AND | OR ) expr                               # ArithmeticOrLogicalExpression
     | expr ASM expr                                       # AssignmentExpression
-    | RETURN expr                                         # ReturnExpression
     | NEW id LPAR params? RPAR                            # NewValsExpression
-    | type expr                                          # VardecExpression
+    | type id                                           # VardecExpression
     ;
 
 stmt
@@ -177,7 +175,15 @@ stmt
    | tryAbortStatement
    | tryStatement
    | blockExpr
+   | return
+   | funCall
    ;
+
+return
+    : RETURN expr
+    ;
+
+
 
 blockExpr
    : '{' stmts? '}'
@@ -187,10 +193,6 @@ stmts
    : stmt+ expr?
    | expr
    ;
-
-identifier
-    : ID
-    ;
 
 comparisonOperator
    : '=='

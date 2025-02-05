@@ -3,19 +3,17 @@
  * SPDX-License-Identifier: GPL-2.0-only */
 package org.key_project.smartml.ast;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import org.key_project.logic.Name;
-import org.key_project.rusty.parsing.RustyParser;
+import org.key_project.smartml.ast.expr.*;
 import org.key_project.smartml.ast.Identifier;
 import org.key_project.smartml.Services;
 import org.key_project.smartml.ast.abstraction.Type;
-import org.key_project.smartml.ast.expr.BlockExpression;
-import org.key_project.smartml.ast.expr.Expr;
 import org.key_project.smartml.ast.fn.Constructor;
 import org.key_project.smartml.ast.fn.Function;
-import org.key_project.smartml.ast.stmt.ExceptionDec;
-import org.key_project.smartml.ast.stmt.Statement;
+import org.key_project.smartml.ast.stmt.*;
 import org.key_project.smartml.ast.ty.SmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
 import org.key_project.util.collection.ImmutableArray;
@@ -148,15 +146,191 @@ public class Converter {
     }
 
     private Statement convertStatement(SmartMLParser.StmtContext ctx){
+        if(ctx.expr()!=null){ return convertExpr(ctx.expr()); }
+        else if(ctx.blockExpr()!=null){ return convertBlockExpr(ctx.blockExpr()); }
+        else if(ctx.ifStatement()!=null){ return convertIfStatement(ctx.ifStatement()); }
+        else if(ctx.letExpr()!=null){ return convertLetExpr(ctx.letExpr()); }
+        else if(ctx.loop()!=null){ return convertLoop(ctx.loop()); }
+        else if(ctx.assert_()!=null){ return convertAssert(ctx.assert_()); }
+        else if(ctx.tryStatement()!=null){ return convertTryStatement(ctx.tryStatement()); }
+        else if(ctx.tryAbortStatement()!=null){ return convertTryAbortStatement(ctx.tryAbortStatement()); }
+        else if(ctx.return_()!=null){ return convertReturnStatement(ctx.return_());}
+        else if(ctx.funCall()!=null){ return convertFunCallStatement(ctx.funCall());}
+        throw new UnsupportedOperationException("Unknown statement: " + ctx.getText());
+    }
+
+    private ReturnStatement convertReturnStatement(SmartMLParser.ReturnContext ctx){
+        return new ReturnStatement(convertExpr(ctx.expr()));
+    }
+
+    private Statement convertFunCallStatement(SmartMLParser.FunCallContext ctx){
+        if(ctx.internalCall()!=null) { return convertInternalCallContext(ctx.internalCall());}
+        if(ctx.externalCall()!=null) { return convertExternalCallContext(ctx.externalCall());}
+        if(ctx.adtCall()!=null) { return convertAdtCallContext(ctx.adtCall());}
+        throw new UnsupportedOperationException("Unknown function call: " + ctx.getText());
+    }
+
+    private ExternalCall convertExternalCallContext(SmartMLParser.ExternalCallContext ctx){
+        ImmutableArray<Var> params = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        Identifier funId = convertIdentifier(ctx.funName);
+        Identifier calledId = convertIdentifier(ctx.idName);
+        Expr expr = ctx.expr() == null ? null : convertExpr(ctx.expr());
+        return new ExternalCall(funId,calledId,expr,params);
+    }
+
+    private InternalCall convertInternalCallContext(SmartMLParser.InternalCallContext ctx){
+        ImmutableArray<Var> params = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        Identifier funId = convertIdentifier(ctx.funName);
+        return new InternalCall(funId,params);
+    }
+
+    private AdtCall convertAdtCallContext(SmartMLParser.AdtCallContext ctx){
+        ImmutableArray<Var> params = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        Identifier id = convertIdentifier(ctx.id());
+        return new AdtCall(id,params);
+    }
+
+    private IfStatement convertIfStatement(SmartMLParser.IfStatementContext ctx){
+        var cond = convertExpr(ctx.expr());
+        var then = convertBlockExpr(ctx.blockExpr(0));
+        var else_ = ctx.blockExpr().size() > 1 ? convertBlockExpr(ctx.blockExpr(1))
+                : ctx.ifStatement() != null ? convertIfStatement(ctx.ifStatement())
+                : null;
+        return new IfStatement(cond, then, (BlockExpression) else_);    }
+
+    private LetStatement convertLetExpr(SmartMLParser.LetExprContext ctx){
         return null;
     }
 
+    private LoopStatement convertLoop(SmartMLParser.LoopContext ctx){
+        return new LoopStatement(convertExpr(ctx.expr()),convertBlockExpr(ctx.blockExpr()));
+    }
+
+    private AssertStatement convertAssert(SmartMLParser.AssertContext ctx){
+        return new AssertStatement(convertExpr(ctx.expr()));
+    }
+
+    private TryStatement convertTryStatement(SmartMLParser.TryStatementContext ctx){
+        var stm = convertStatement(ctx.stmt());
+        ImmutableArray<Var> vars = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        return new TryStatement(stm,vars,convertBlockExpr(ctx.blockExpr()));
+    }
+
+    private TryAbortStatement convertTryAbortStatement(SmartMLParser.TryAbortStatementContext ctx){
+        return new TryAbortStatement(convertExpr(ctx.expr()),convertBlockExpr(ctx.blockExpr(0)), convertBlockExpr(ctx.blockExpr(1)));
+    }
+
     private Expr convertExpr(SmartMLParser.ExprContext ctx){
-        return null;
+        if (ctx instanceof SmartMLParser.LiteralExpressionContext x) { return convertLiteralExpr(x.literalExpr()); }
+        if (ctx instanceof SmartMLParser.IdentifierExpressionContext x) { return new Identifier(convertIdentifier(x.id()).name()); }
+        if (ctx instanceof SmartMLParser.ParenthesizedExpressionContext x) { return convertExpr(x.expr()); }
+        if (ctx instanceof SmartMLParser.FieldAccessContext) { return convertFieldExpr((SmartMLParser.FieldAccessContext) ctx); }
+        if (ctx instanceof SmartMLParser.ResourceExpressionContext) { return convertResourceExpr((SmartMLParser.ResourceExpressionContext) ctx); }
+        if (ctx instanceof SmartMLParser.AssignmentExpressionContext x){ return convertAssignmentExpression(x); }
+        if (ctx instanceof SmartMLParser.ComparisonExpressionContext x) { return convertComparisonExpression(x); }
+        if (ctx instanceof SmartMLParser.UnaryExpressionContext x) { return convertUnaryExpression(x); }
+        if (ctx instanceof SmartMLParser.NewValsExpressionContext x) { return convertNewValsExpression(x); }
+        if (ctx instanceof SmartMLParser.VardecExpressionContext x) { return convertVardecExpression(x); }
+        if (ctx instanceof SmartMLParser.ArithmeticOrLogicalExpressionContext x) { return convertArithmeticOrLogicalExpression(x); }
+        throw new UnsupportedOperationException("Unknown expr: " + ctx.getText() + " class: " + ctx.getClass());
+    }
+
+
+    private Expr convertLiteralExpr(SmartMLParser.LiteralExprContext ctx) {
+        if (ctx.KW_TRUE() != null)
+            return new BooleanLiteralExpression(true);
+        if (ctx.KW_FALSE() != null)
+            return new BooleanLiteralExpression(false);
+        var intLit = ctx.INTEGER_LITERAL();
+        if (intLit != null) {
+            var text = intLit.getText();
+            var signed = text.contains("i");
+            var split = text.split("[ui]");
+            var size = split[split.length - 1];
+            var suffix = IntegerLiteralExpression.IntegerSuffix.get(signed, size);
+            var lit = split[0];
+            var value = new BigInteger(lit);
+            return new IntegerLiteralExpression(value, suffix);
+        }
+        throw new IllegalArgumentException("Expected boolean or integer literal");
+    }
+
+    private ResourceExpression convertResourceExpr(SmartMLParser.ResourceExpressionContext ctx){
+        return new ResourceExpression(convertExpr(ctx.expr(0)),convertExpr(ctx.expr(1)));
+    }
+
+    private Expr convertArithmeticOrLogicalExpression(SmartMLParser.ArithmeticOrLogicalExpressionContext ctx) {
+        ArithLogicalExpression.Operator op = null;
+        if (ctx.AND() != null)
+            op = ArithLogicalExpression.Operator.BitwiseAnd;
+        if (ctx.OR() != null)
+            op = ArithLogicalExpression.Operator.BitwiseOr;
+        if (ctx.CARET() != null)
+            op = ArithLogicalExpression.Operator.BitwiseXor;
+        if (ctx.PLUS() != null)
+            op = ArithLogicalExpression.Operator.Plus;
+        if (ctx.MINUS() != null)
+            op = ArithLogicalExpression.Operator.Minus;
+        if (ctx.PERCENT() != null)
+            op = ArithLogicalExpression.Operator.Modulo;
+        if (ctx.STAR() != null)
+            op = ArithLogicalExpression.Operator.Multiply;
+        if (ctx.SLASH() != null)
+            op = ArithLogicalExpression.Operator.Divide;
+        assert op != null;
+        return new ArithLogicalExpression(convertExpr(ctx.expr(0)), op,
+                convertExpr(ctx.expr(1)));
+    }
+
+
+    private AssignmentExpression convertAssignmentExpression(SmartMLParser.AssignmentExpressionContext ctx) {
+        var lhs = convertExpr(ctx.expr(0));
+        var rhs = convertExpr(ctx.expr(1));
+        return new AssignmentExpression(lhs, rhs);
+    }
+
+    private ComparisonExpression convertComparisonExpression(SmartMLParser.ComparisonExpressionContext ctx) {
+        var left = convertExpr(ctx.expr(0));
+        var right = convertExpr(ctx.expr(1));
+        var opCtx = ctx.comparisonOperator();
+        var op = opCtx.EQEQ() != null ? ComparisonExpression.Operator.Equal
+                : opCtx.GT() != null ? ComparisonExpression.Operator.Greater
+                : opCtx.LT() != null ? ComparisonExpression.Operator.Less
+                : opCtx.NE() != null ? ComparisonExpression.Operator.NotEqual
+                : opCtx.GE() != null
+                ? ComparisonExpression.Operator.GreaterOrEqual
+                : opCtx.LE() != null
+                ? ComparisonExpression.Operator.LessOrEqual
+                : null;
+        assert op != null;
+        return new ComparisonExpression(left, op, right);
+    }
+
+    private UnaryExpression convertUnaryExpression(SmartMLParser.UnaryExpressionContext ctx) {
+        var base = convertExpr(ctx.expr());
+        var op =
+                ctx.NOT() != null ? UnaryExpression.Operator.Not : UnaryExpression.Operator.Neg;
+        return new UnaryExpression(base, op);
+    }
+
+    private FieldExpression convertFieldExpr(SmartMLParser.FieldAccessContext ctx) {
+        var base = convertExpr(ctx.expr());
+        var ident = convertIdentifier(ctx.id());
+        return new FieldExpression(base, ident);
     }
 
     private Field convertField(SmartMLParser.FieldContext ctx){
         return new Field(convertType(ctx.type()), convertIdentifier(ctx.id()));
+    }
+
+    private NewValExpression convertNewValsExpression(SmartMLParser.NewValsExpressionContext ctx){
+        ImmutableArray<Var> params = ctx.params().param() == null ? new ImmutableArray<>()
+                : new ImmutableArray<>(ctx.params().param().stream().map(this::convertParam).toList());
+        return new NewValExpression(convertIdentifier(ctx.id()), params);
     }
 
     private Identifier convertIdentifier(SmartMLParser.IdContext ctx) {
@@ -164,6 +338,10 @@ public class Converter {
     }
 
     private Var convertParam(SmartMLParser.ParamContext ctx){
+        return new Var(convertType(ctx.type()), convertIdentifier(ctx.id()));
+    }
+
+    private Var convertVardecExpression(SmartMLParser.VardecExpressionContext ctx){
         return new Var(convertType(ctx.type()), convertIdentifier(ctx.id()));
     }
 

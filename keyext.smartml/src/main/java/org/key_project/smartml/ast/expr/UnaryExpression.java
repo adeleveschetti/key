@@ -5,10 +5,9 @@ package org.key_project.smartml.ast.expr;
 
 import org.jspecify.annotations.NonNull;
 import org.key_project.logic.SyntaxElement;
-import org.key_project.smartml.ast.expr.Expr;
 import org.key_project.smartml.ast.visitor.Visitor;
 
-public class NegationExpression implements org.key_project.smartml.ast.expr.Expr {
+public class UnaryExpression implements org.key_project.smartml.ast.expr.Expr {
     public enum Operator {
         Neg, Not;
 
@@ -24,7 +23,7 @@ public class NegationExpression implements org.key_project.smartml.ast.expr.Expr
     private final org.key_project.smartml.ast.expr.Expr expr;
     private final Operator op;
 
-    public NegationExpression(org.key_project.smartml.ast.expr.Expr expr, Operator op) {
+    public UnaryExpression(org.key_project.smartml.ast.expr.Expr expr, Operator op) {
         this.expr = expr;
         this.op = op;
     }

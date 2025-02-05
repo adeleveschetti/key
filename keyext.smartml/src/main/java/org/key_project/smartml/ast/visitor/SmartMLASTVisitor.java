@@ -5,10 +5,9 @@ package org.key_project.smartml.ast.visitor;
 
 import org.key_project.smartml.Services;
 import org.key_project.smartml.ast.SmartMLProgramElement;
-import org.key_project.smartml.ast.expr.BlockExpression;
-import org.key_project.smartml.ast.expr.BooleanLiteralExpression;
-import org.key_project.smartml.ast.expr.IfExpression;
-import org.key_project.smartml.ast.expr.NegationExpression;
+import org.key_project.smartml.ast.expr.*;
+import org.key_project.smartml.ast.stmt.IfStatement;
+import org.key_project.smartml.ast.stmt.ReturnStatement;
 import org.key_project.smartml.ast.ty.PrimitiveSmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
 import org.key_project.smartml.logic.op.sv.ProgramSV;
@@ -54,10 +53,10 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnAssignmentExpression(AssignmentExpression x) {
-       // doDefaultAction(x);
-    //}
+    @Override
+    public void performActionOnAssignmentExpression(AssignmentExpression x) {
+       doDefaultAction(x);
+    }
 
     @Override
     public void performActionOnBlockExpression(BlockExpression x) {
@@ -80,7 +79,7 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
     //}
 
     @Override
-    public void performActionOnNegationExpression(NegationExpression x) {
+    public void performActionOnNegationExpression(UnaryExpression x) {
        doDefaultAction(x);
     }
 
@@ -119,10 +118,10 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnComparisonExpression(ComparisonExpression x) {
-       // doDefaultAction(x);
-    //}
+    @Override
+    public void performActionOnComparisonExpression(ComparisonExpression x) {
+       doDefaultAction(x);
+    }
 
     //@Override
     // public void performActionOnCompoundAssignmentExpression(CompoundAssignmentExpression x) {
@@ -159,10 +158,10 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnFieldExpression(FieldExpression x) {
-       // doDefaultAction(x);
-    //}
+    @Override
+    public void performActionOnFieldExpression(FieldExpression x) {
+       doDefaultAction(x);
+    }
 
     //@Override
     // public void performActionOnFieldStructExpression(StructStructExpression x) {
@@ -204,10 +203,6 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
        // doDefaultAction(x);
     //}
 
-    //@Override
-    // public void performActionOnReturnExpression(ReturnExpression x) {
-       // doDefaultAction(x);
-    //}
 
     //@Override
     // public void performActionOnSelfParam(SelfParam x) {
@@ -245,7 +240,7 @@ public abstract class SmartMLASTVisitor extends SmartMLASTWalker implements Visi
     //}
 
     @Override
-    public void performActionOnIfExpression(IfExpression x) {
+    public void performActionOnIfStatement(IfStatement x) {
        doDefaultAction(x);
     }
 
