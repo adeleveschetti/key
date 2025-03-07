@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: GPL-2.0-only */
 package org.key_project.smartml.control;
 
-import org.key_project.rusty.Services;
-import org.key_project.rusty.proof.Proof;
-import org.key_project.rusty.proof.init.InitConfig;
-import org.key_project.rusty.proof.init.Profile;
-import org.key_project.rusty.proof.io.AbstractProblemLoader;
-import org.key_project.rusty.proof.io.AbstractProblemLoader.ReplayResult;
-import org.key_project.rusty.proof.io.ProblemLoaderException;
-import org.key_project.rusty.proof.io.SingleThreadProblemLoader;
+import org.key_project.smartml.Services;
+import org.key_project.smartml.proof.Proof;
+import org.key_project.smartml.proof.init.InitConfig;
+import org.key_project.smartml.proof.init.Profile;
+import org.key_project.smartml.proof.io.AbstractProblemLoader;
+import org.key_project.smartml.proof.io.AbstractProblemLoader.ReplayResult;
+import org.key_project.smartml.proof.io.ProblemLoaderException;
+import org.key_project.smartml.proof.io.SingleThreadProblemLoader;
 
 import java.io.File;
 import java.util.List;

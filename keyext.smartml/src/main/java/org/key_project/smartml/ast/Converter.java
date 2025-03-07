@@ -16,6 +16,7 @@ import org.key_project.smartml.ast.fn.Function;
 import org.key_project.smartml.ast.stmt.*;
 import org.key_project.smartml.ast.ty.SmartMLType;
 import org.key_project.smartml.logic.op.ProgramVariable;
+import org.key_project.smartml.parser.SmartMLParser;
 import org.key_project.util.collection.ImmutableArray;
 import org.key_project.util.collection.ImmutableList;
 

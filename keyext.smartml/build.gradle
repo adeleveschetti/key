@@ -10,11 +10,13 @@ repositories {
     mavenCentral()
 }
 
+configurations{ antlr4 }
+
 dependencies {
-    implementation project(path: ':keyext.rusty')
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    antlr 'org.antlr:antlr4:4.13.1'
+    antlr4 "org.antlr:antlr4:4.13.2"
+    api "org.antlr:antlr4-runtime:4.13.2"
     api project(':key.ncore')
     api project(':key.ncore.calculus')
     api project(':key.util')
@@ -24,6 +26,34 @@ test {
     useJUnitPlatform()
 }
 
-generateGrammarSource {
-    arguments += ["-visitor", "-lib" , "../key.ncore/src/main/antlr/"]
+generateTestGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-listener", "-long-messages"]
 }
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-lib" , "../keyext.smartml/src/main/antlr/"]
+}
+
+
+
+def antlr4OutputSmartML = "$projectDir/build/generated-src/antlr/main/java/org/key_project/smartml/parser"
+task runAntlr4Key(type: JavaExec) {
+    //see incremental task api, prevents rerun if nothing has changed.
+    inputs.files "src/main/antlr/SmartMLLexer.g4", "src/main/antlr/SmartMLParser.g4"
+    outputs.dir antlr4OutputSmartML
+    classpath = configurations.antlr4
+    mainClass.set("org.antlr.v4.Tool")
+    args = ["-visitor",
+            "-Xexact-output-dir", "-o", antlr4OutputSmartML,
+            "-package", "org.key_project.smartml.parser",
+            "src/main/antlr/SmartMLLexer.g4", "src/main/antlr/SmartMLParser.g4"]
+    doFirst {
+        file(antlr4OutputSmartML).mkdirs()
+        println("create $antlr4OutputSmartML")
+    }
+}
+compileJava.dependsOn runAntlr4Key
+
+sourcesJar.dependsOn(runAntlr4Key, generateGrammarSource)

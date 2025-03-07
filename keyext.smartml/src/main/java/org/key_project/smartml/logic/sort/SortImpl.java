@@ -7,7 +7,7 @@ import org.jspecify.annotations.NonNull;
 import org.key_project.logic.Name;
 import org.key_project.logic.sort.AbstractSort;
 import org.key_project.logic.sort.Sort;
-import org.key_project.rusty.logic.RustyDLTheory;
+import org.key_project.smartml.logic.SmartMLDLTheory;
 import org.key_project.util.collection.DefaultImmutableSet;
 import org.key_project.util.collection.ImmutableSet;
 
@@ -29,12 +29,12 @@ public class SortImpl extends AbstractSort {
 
     @Override
     public @NonNull ImmutableSet<Sort> extendsSorts() {
-        if (this == RustyDLTheory.FORMULA || this == RustyDLTheory.UPDATE
-                || this == RustyDLTheory.ANY) {
+        if (this == SmartMLDLTheory.FORMULA || this == SmartMLDLTheory.UPDATE
+                || this == SmartMLDLTheory.ANY) {
             return DefaultImmutableSet.nil();
         } else {
             if (ext.isEmpty()) {
-                ext = DefaultImmutableSet.<Sort>nil().add(RustyDLTheory.ANY);
+                ext = DefaultImmutableSet.<Sort>nil().add(SmartMLDLTheory.ANY);
             }
             return ext;
         }
@@ -44,9 +44,9 @@ public class SortImpl extends AbstractSort {
     public boolean extendsTrans(@NonNull Sort sort) {
         if (sort == this) {
             return true;
-        } else if (this == RustyDLTheory.FORMULA || this == RustyDLTheory.UPDATE) {
+        } else if (this == SmartMLDLTheory.FORMULA || this == SmartMLDLTheory.UPDATE) {
             return false;
-        } else if (sort == RustyDLTheory.ANY) {
+        } else if (sort == SmartMLDLTheory.ANY) {
             return true;
         }
 

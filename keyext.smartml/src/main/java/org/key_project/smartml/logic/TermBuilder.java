@@ -8,7 +8,7 @@ import org.key_project.logic.TermCreationException;
 import org.key_project.logic.op.Function;
 import org.key_project.logic.op.QuantifiableVariable;
 import org.key_project.logic.op.UpdateableOperator;
-import org.key_project.rusty.logic.op.Equality;
+import org.key_project.smartml.logic.op.Equality;
 import org.key_project.smartml.Services;
 import org.key_project.smartml.ldt.IntLDT;
 import org.key_project.smartml.logic.op.*;

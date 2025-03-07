@@ -5,7 +5,7 @@ package org.key_project.smartml.logic.sort;
 
 import org.key_project.logic.Name;
 import org.key_project.logic.sort.Sort;
-import org.key_project.rusty.logic.RustyDLTheory;
+import org.key_project.smartml.logic.SmartMLDLTheory;
 import org.key_project.util.collection.DefaultImmutableSet;
 import org.key_project.util.collection.ImmutableSet;
 
@@ -57,7 +57,7 @@ public class GenericSort extends SortImpl {
      *         Use "GenericSortInstantiations" instead
      */
     public boolean isPossibleInstantiation(Sort p_s) {
-        return p_s != RustyDLTheory.FORMULA && (oneOf.isEmpty() || oneOf.contains(p_s))
+        return p_s != SmartMLDLTheory.FORMULA && (oneOf.isEmpty() || oneOf.contains(p_s))
                 && checkNonGenericSupersorts(p_s);
     }
 

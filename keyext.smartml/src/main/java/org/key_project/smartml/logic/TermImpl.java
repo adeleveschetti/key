@@ -10,7 +10,7 @@ import org.key_project.logic.op.Modality;
 import org.key_project.logic.op.Operator;
 import org.key_project.logic.op.QuantifiableVariable;
 import org.key_project.logic.sort.Sort;
-import org.key_project.rusty.logic.RustyBlock;
+import org.key_project.smartml.logic.SmartMLBlock;
 import org.key_project.util.Strings;
 import org.key_project.util.collection.DefaultImmutableSet;
 import org.key_project.util.collection.ImmutableArray;
@@ -243,7 +243,7 @@ class TermImpl implements Term {
     public boolean containsCodeBlockRecursive() {
         if (containsCodeBlockRecursive == ThreeValuedTruth.UNKNOWN) {
             ThreeValuedTruth result = ThreeValuedTruth.FALSE;
-            if (op instanceof Modality mod && !((RustyBlock) mod.program()).isEmpty()) {
+            if (op instanceof Modality mod && !((SmartMLBlock) mod.program()).isEmpty()) {
                 result = ThreeValuedTruth.TRUE;
             } else {
                 for (int i = 0, arity = subs.size(); i < arity; i++) {
@@ -263,7 +263,7 @@ class TermImpl implements Term {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (op() instanceof Modality mod) {
-            if (mod.kind() == org.key_project.rusty.logic.op.Modality.RustyModalityKind.DIA) {
+            if (mod.kind() == org.key_project.rusty.logic.op.Modality.SmartMLModalityKind.DIA) {
                 sb.append("\\<").append(mod.program()).append("\\>");
             } else {
                 sb.append("\\[").append(mod.program()).append("\\]");
